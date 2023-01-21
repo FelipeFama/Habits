@@ -48,7 +48,7 @@ export function NewHabitForm() {
         Qual a recorrência ?
       </label>
 
-      <div className="flex flex-col gap-2 mt-3">
+      <div className="flex flex-col gap-1 mt-3">
         {availableWeekDays.map((weekDay, index) => {
           return (
             <Checkbox.Root
