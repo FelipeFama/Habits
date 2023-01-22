@@ -23,6 +23,7 @@ type SummaryProps = Array<{
 export function Home() {
   const [loading, setLoading] = useState(true);
   const [summary, setSummary] = useState<SummaryProps | null>(null);
+
   const { navigate } = useNavigation();
 
   async function fetchData() {
