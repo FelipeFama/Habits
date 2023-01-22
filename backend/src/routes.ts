@@ -73,7 +73,6 @@ export async function appRoutes(app: FastifyInstance) {
   });
 
   app.patch("/habits/:id/toggle", async (request) => {
-    //route param => identification parameter
     const toggleHabitParams = z.object({
       id: z.string().uuid(),
     });
@@ -119,37 +118,30 @@ export async function appRoutes(app: FastifyInstance) {
         },
       });
     }
-
-    await prisma.dayHabit.create({
-      data: {
-        day_id: day.id,
-        habit_id: id,
-      },
-    });
   });
 
   app.get("/summary", async () => {
     const summary = await prisma.$queryRaw`
-    SELECT 
-     D.id, 
-     D.date,
-     (
       SELECT 
-       cast(count(*) as float)
-      FROM day_habits DH
-      WHERE DH.day_id = D.id
-     ) as completed,
-     (
-      SELECT
-       cast(count(*) as float)
-      FROM habit_week_days HDW
-      JOIN habits H
+        D.id, 
+        D.date,
+        (
+          SELECT 
+            cast(count(*) as float)
+          FROM day_habits DH
+          WHERE DH.day_id = D.id
+        ) as completed,
+        (
+          SELECT
+            cast(count(*) as float)
+          FROM habit_week_days HDW
+          JOIN habits H
             ON H.id = HDW.habit_id
-      WHERE 
-       HDW.week_day = cast(strftime('%w', D.date/1000.0, 'unixepoch') as int)
-       AND H.created_at <= D.date
-     ) as amount
-    FROM days D
+          WHERE
+            HDW.week_day = cast(strftime('%w', D.date/1000.0, 'unixepoch') as int)
+            AND H.created_at <= D.date
+        ) as amount
+      FROM days D
     `;
 
     return summary;
